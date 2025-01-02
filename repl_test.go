@@ -18,6 +18,10 @@ func TestCleanInput(t *testing.T) {
 	}
 	for _, c := range cases {
 		actual := cleanInput(c.input)
+		if len(actual) != len(c.expected) {
+			t.Errorf("lengths don't match: '%v' vs '%v'", actual, c.expected)
+			continue
+		}
 		for i := range actual {
 			if actual[i] != c.expected[i] {
 				t.Errorf("got %q, expected %q", actual, c.expected)
