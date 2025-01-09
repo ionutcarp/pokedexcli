@@ -1,16 +1,17 @@
 package main
 
-import "github.com/ionutcarp/pokedexcli/internal/pokeapi"
-
-type config struct {
-	pokeapiClient       pokeapi.Client
-	nextLocationAreaURL *string
-	prevLocationAreaURL *string
-}
+import (
+	"github.com/ionutcarp/pokedexcli/internal/pokeapi"
+	"time"
+)
 
 func main() {
-	cfg := config{
-		pokeapiClient: pokeapi.NewClient(),
+	pokeClient := pokeapi.NewClient(5*time.Second, 5*time.Minute)
+
+	cfg := &config{
+		pokeapiClient: pokeClient,
 	}
-	startRepl(&cfg)
+
+	startRepl(cfg)
+
 }

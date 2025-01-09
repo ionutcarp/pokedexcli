@@ -3,10 +3,16 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"github.com/ionutcarp/pokedexcli/internal/pokeapi"
 	"os"
 	"strings"
 )
 
+type config struct {
+	pokeapiClient       pokeapi.Client
+	nextLocationAreaURL *string
+	prevLocationAreaURL *string
+}
 type cliCommand struct {
 	name        string
 	description string
@@ -40,6 +46,7 @@ func getCommands() map[string]cliCommand {
 
 func startRepl(cfg *config) {
 	reader := bufio.NewScanner(os.Stdin)
+
 	for {
 		fmt.Print("Pokedex> ")
 		reader.Scan()
