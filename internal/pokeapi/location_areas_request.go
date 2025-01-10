@@ -7,31 +7,31 @@ import (
 	"net/http"
 )
 
-func (c *Client) ListLocationAreas(pageURL *string) (LocationAreaResp, error) {
+func (c *Client) ListLocationAreas(pageURL *string) (ResponseLocationAreas, error) {
 	fullURL := baseURL + "/location-area"
 	if pageURL != nil {
 		fullURL = *pageURL
 	}
 
 	if val, ok := c.cache.Get(fullURL); ok {
-		locationsFromCache := LocationAreaResp{}
+		locationsFromCache := ResponseLocationAreas{}
 		err := json.Unmarshal(val, &locationsFromCache)
 		if err != nil {
-			return LocationAreaResp{}, err
+			return ResponseLocationAreas{}, err
 		}
-		fmt.Println("cache hit")
+		fmt.Println("Locations list retrieved from cache")
 		return locationsFromCache, nil
 	}
-	fmt.Println("cache miss")
+	fmt.Println("Retrieving location areas from HTTP")
 
 	req, err := http.NewRequest("GET", fullURL, nil)
 	if err != nil {
-		return LocationAreaResp{}, err
+		return ResponseLocationAreas{}, err
 	}
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return LocationAreaResp{}, err
+		return ResponseLocationAreas{}, err
 	}
 	defer func(Body io.ReadCloser) {
 		err := Body.Close()
@@ -41,18 +41,18 @@ func (c *Client) ListLocationAreas(pageURL *string) (LocationAreaResp, error) {
 	}(resp.Body)
 
 	if resp.StatusCode > 399 {
-		return LocationAreaResp{}, fmt.Errorf("bad status code: %v", resp.StatusCode)
+		return ResponseLocationAreas{}, fmt.Errorf("bad status code: %v", resp.StatusCode)
 	}
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return LocationAreaResp{}, err
+		return ResponseLocationAreas{}, err
 	}
 
-	LocationAreasResp := LocationAreaResp{}
+	LocationAreasResp := ResponseLocationAreas{}
 	err = json.Unmarshal(data, &LocationAreasResp)
 	if err != nil {
-		return LocationAreaResp{}, err
+		return ResponseLocationAreas{}, err
 	}
 
 	c.cache.Add(fullURL, data)

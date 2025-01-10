@@ -10,8 +10,9 @@ func main() {
 
 	cfg := &config{
 		pokeapiClient: pokeClient,
+		pokedex:       make(map[string]pokeapi.Pokemon),
+		seenPokemon:   make(map[string]struct{}),
 	}
-
 	startRepl(cfg)
 
 }
